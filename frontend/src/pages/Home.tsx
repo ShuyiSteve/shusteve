@@ -86,7 +86,7 @@ export default function Home() {
           >
             <div className="overflow-hidden rounded-[1.75rem] border hairline bg-white shadow-xl shadow-neutral-900/10 dark:bg-neutral-900 dark:shadow-black/40">
               <img
-                src="/images/profile.jpg"
+                src="/images/profile01.jpg"
                 alt="Portrait of Steve Wang"
                 width={1200}
                 height={1500}
