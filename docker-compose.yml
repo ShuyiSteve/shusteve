@@ -59,7 +59,10 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT:-3000}:80"
+      - "${FRONTEND_PORT:-80}:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
 
 volumes:
   mysql_data:
