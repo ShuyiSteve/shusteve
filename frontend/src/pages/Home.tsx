@@ -93,9 +93,6 @@ export default function Home() {
                 className="h-auto w-full object-cover"
               />
             </div>
-            <p className="mt-3 text-center text-xs text-neutral-400 dark:text-neutral-500">
-              Replace this placeholder with your portrait · see README
-            </p>
           </motion.div>
         </div>
       </section>
