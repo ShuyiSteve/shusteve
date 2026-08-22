@@ -1,0 +1,51 @@
+# Production services (no frontend container — a host Nginx serves the built
+# React app and proxies /api and /uploads here). Services are bound to
+# 127.0.0.1 so they are not exposed directly to the internet.
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-shusteve}
+      MYSQL_USER: ${DB_USER:-shusteve}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: "8080"
+      GIN_MODE: release
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: ${DB_USER:-shusteve}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-shusteve}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      TOKEN_TTL_HOURS: "72"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+      COOKIE_SECURE: "true"
+      ALLOWED_ORIGIN: https://${DOMAIN:-shusteve.com}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_MB: "10"
+      SEED_DATA: "false"
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  mysql_data:
+  uploads_data:

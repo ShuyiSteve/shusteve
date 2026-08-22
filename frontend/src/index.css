@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-paper-light text-neutral-900 antialiased transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-paper-dark text-neutral-100;
+  }
+
+  ::selection {
+    @apply bg-neutral-900 text-white;
+  }
+
+  .dark ::selection {
+    @apply bg-white text-neutral-900;
+  }
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-neutral-400;
+  }
+
+  a {
+    @apply underline-offset-4;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8;
+  }
+
+  .hairline {
+    @apply border-neutral-200 dark:border-neutral-800;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-0.5 shadow-lg shadow-neutral-900/5 dark:shadow-black/40;
+  }
+
+  .masonry {
+    columns: 1;
+    column-gap: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .masonry { columns: 2; }
+  }
+  @media (min-width: 1024px) {
+    .masonry { columns: 3; }
+  }
+  .masonry > * {
+    break-inside: avoid;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-neutral-300 dark:bg-neutral-700;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

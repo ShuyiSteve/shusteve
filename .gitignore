@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+backend/shusteve-api
+
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.production
+frontend/.env
+backend/.env
+
+# Local uploads (except the placeholder)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Go build cache
+*.test
+
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
