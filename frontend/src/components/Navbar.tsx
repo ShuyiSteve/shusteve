@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Github, Menu, X, Youtube } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
@@ -12,29 +12,15 @@ const links = [
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-        scrolled || open
-          ? 'border-b hairline bg-white/80 backdrop-blur-xl dark:bg-neutral-950/80'
-          : 'border-b border-transparent bg-transparent'
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/20 bg-[#FF8F70] dark:bg-[#2E6BFF]">
       <nav className="container-page flex h-16 items-center justify-between" aria-label="Main navigation">
         <Link
           to="/"
           onClick={() => setOpen(false)}
-          className="text-[17px] font-semibold tracking-tight text-neutral-900 dark:text-neutral-50"
+          className="text-[17px] font-semibold tracking-tight text-white"
         >
           shuSteve
         </Link>
@@ -47,8 +33,8 @@ export default function Navbar() {
               className={({ isActive }) =>
                 `rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'text-neutral-900 dark:text-neutral-50'
-                    : 'text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50'
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/85 hover:bg-white/15 hover:text-white'
                 }`
               }
             >
@@ -63,7 +49,7 @@ export default function Navbar() {
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"
-            className="hidden h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 sm:inline-flex"
+            className="hidden h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/20 hover:text-white sm:inline-flex"
           >
             <Github size={17} strokeWidth={1.75} />
           </a>
@@ -72,7 +58,7 @@ export default function Navbar() {
             target="_blank"
             rel="noreferrer"
             aria-label="YouTube"
-            className="hidden h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 sm:inline-flex"
+            className="hidden h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/20 hover:text-white sm:inline-flex"
           >
             <Youtube size={18} strokeWidth={1.75} />
           </a>
@@ -82,7 +68,7 @@ export default function Navbar() {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/20 md:hidden"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -90,7 +76,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t hairline bg-white/95 px-5 py-4 backdrop-blur-xl dark:bg-neutral-950/95 md:hidden">
+        <div className="border-t border-white/20 bg-[#FF8F70] px-5 py-4 dark:bg-[#2E6BFF] md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((l) => (
               <NavLink
@@ -100,8 +86,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `rounded-lg px-3 py-2.5 text-base font-medium ${
                     isActive
-                      ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
-                      : 'text-neutral-600 dark:text-neutral-300'
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/90 hover:bg-white/15'
                   }`
                 }
               >

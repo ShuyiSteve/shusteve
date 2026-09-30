@@ -15,8 +15,8 @@ export default {
       },
       colors: {
         paper: {
-          light: '#fafaf9',
-          dark: '#0a0a0b',
+          light: '#FFF5F0',
+          dark: '#0A0E1E',
         },
       },
     },
