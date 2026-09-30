@@ -65,7 +65,7 @@ func SeedSampleData(db *gorm.DB, cfg *config.Config) error {
 			Title:         "Building My Personal Website From Scratch",
 			Slug:          "building-my-personal-website",
 			Description:   "How I designed and built this site with React, TypeScript, Go and MySQL — and everything I learned along the way.",
-			Content:       "# Building My Personal Website\n\nI wanted a place to write, share photos and keep a vlog — so I built one.\n\n## The stack\n\n- **Frontend:** React, TypeScript, Vite, Tailwind CSS\n- **Backend:** Go, Gin, GORM\n- **Database:** MySQL\n\n## Why Go?\n\nI'm learning Go this year and wanted a real project to practice with. Gin and GORM keep things simple while staying fast.\n\n> This is placeholder content — replace it from the admin dashboard.\n",
+			Content:       "# Building My Personal Website\n\nI wanted a place to write, share photos and keep a vlog — so I built one.\n\n## The stack\n\n- **Frontend:** React, TypeScript, Vite, Tailwind CSS\n- **Backend:** Go, Gin, GORM\n- **Database:** MySQL\n\n## Why Go?\n\nI'm learning Go this year and wanted a real project to practice with. Gin and GORM keep things simple while staying fast.\n\n>",
 			CoverImageURL: "https://picsum.photos/seed/shusteve-post-1/1600/900",
 			Category:      "Projects",
 			Published:     true,
