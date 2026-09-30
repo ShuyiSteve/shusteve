@@ -36,10 +36,6 @@ export default function About() {
               I'm a first-year Computer Science student at UCL. I enjoy building things with code,
               learning how systems work under the hood, and documenting what I discover along the way.
             </p>
-            <p className="mt-4 max-w-xl leading-relaxed text-neutral-500 dark:text-neutral-400">
-              This website is my corner of the internet — a place for writing, photography, and video.
-              (This is placeholder text; edit <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-sm dark:bg-neutral-800">src/pages/About.tsx</code> to make it yours.)
-            </p>
           </Reveal>
 
           <Reveal>
