@@ -2,12 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpeg" sizes="512x512" href="/images/shuSteve-icon-dark.jpg" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" type="image/jpeg" sizes="512x512" href="/images/shuSteve-icon-light.jpg" media="(prefers-color-scheme: light)" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/shuSteve-touch-icon-180.jpg" />
+    <link id="favicon-png" rel="icon" type="image/png" sizes="256x256" href="/images/shuSteve-icon-light.png" />
+    <link id="favicon-svg" rel="icon" type="image/svg+xml" href="/images/shuSteve-icon-light.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/shuSteve-touch-icon-180.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#FFF5F0" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0A0E1E" media="(prefers-color-scheme: dark)" />
+    <meta id="theme-color" name="theme-color" content="#FFF5F0" />
+    <script>
+      // 让网页图标(和地址栏颜色)跟随网站的深/浅色切换，而不是只跟随系统
+      (function () {
+        var ICON = {
+          light: { svg: '/images/shuSteve-icon-light.svg', png: '/images/shuSteve-icon-light.png', color: '#FFF5F0' },
+          dark: { svg: '/images/shuSteve-icon-dark.svg', png: '/images/shuSteve-icon-dark.png', color: '#0A0E1E' }
+        };
+        function preferred() {
+          try {
+            var stored = window.localStorage.getItem('shusteve-theme');
+            if (stored === 'dark' || stored === 'light') return stored;
+          } catch (e) {}
+          return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function apply(theme) {
+          var set = ICON[theme] || ICON.light;
+          var svg = document.getElementById('favicon-svg');
+          var png = document.getElementById('favicon-png');
+          var meta = document.getElementById('theme-color');
+          if (svg) svg.setAttribute('href', set.svg);
+          if (png) png.setAttribute('href', set.png);
+          if (meta) meta.setAttribute('content', set.color);
+        }
+        var theme = preferred();
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        apply(theme);
+        new MutationObserver(function () {
+          apply(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      })();
+    </script>
     <title>Steve Wang | shuSteve</title>
     <meta name="description" content="Personal website of Steve Wang — CS student, developer and creator." />
     <meta name="author" content="Steve Wang" />
