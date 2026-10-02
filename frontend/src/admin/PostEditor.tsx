@@ -19,6 +19,8 @@ const empty = {
 
 // Keep in sync with allowedImageTypes in backend/controllers/photos.go
 const ACCEPTED_IMAGES = 'image/jpeg,image/png,image/webp,image/gif'
+// Keep in sync with MAX_UPLOAD_MB in the backend/docker configuration.
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
 export default function PostEditor() {
   const { id } = useParams<{ id: string }>()
@@ -80,6 +82,12 @@ export default function PostEditor() {
 
   const uploadFile = async (file: File, target: 'cover' | 'content') => {
     setUploadError('')
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadError('Image is too large (max 10 MB)')
+      if (coverInput.current) coverInput.current.value = ''
+      if (contentInput.current) contentInput.current.value = ''
+      return
+    }
     setUploading(target)
     try {
       const { url } = await adminUploadImage(file)
