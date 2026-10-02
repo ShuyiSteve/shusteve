@@ -32,6 +32,9 @@ func Setup(r *gin.Engine, app *controllers.App) {
 		admin := api.Group("/admin", middleware.AuthRequired(app.Config))
 		{
 			admin.GET("/stats", app.AdminStats)
+			admin.GET("/uploads", app.AdminListUploads)
+			admin.POST("/uploads", app.AdminUploadImage)
+			admin.DELETE("/uploads", app.AdminDeleteUpload)
 
 			admin.GET("/posts", app.AdminListPosts)
 			admin.POST("/posts", app.AdminCreatePost)

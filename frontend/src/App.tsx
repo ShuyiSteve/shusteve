@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import AdminLayout from './admin/AdminLayout'
 import Dashboard from './admin/Dashboard'
 import Login from './admin/Login'
+import AdminImages from './admin/Images'
 import AdminPhotos from './admin/Photos'
 import PostEditor from './admin/PostEditor'
 import AdminPosts from './admin/Posts'
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="posts/new" element={<PostEditor />} />
         <Route path="posts/:id/edit" element={<PostEditor />} />
         <Route path="photos" element={<AdminPhotos />} />
+        <Route path="images" element={<AdminImages />} />
         <Route path="vlogs" element={<AdminVlogs />} />
       </Route>
     </Routes>

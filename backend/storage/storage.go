@@ -6,9 +6,18 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
+
+// File describes one stored object, regardless of where it physically lives.
+type File struct {
+	Name       string    `json:"name"`
+	URL        string    `json:"url"`
+	Size       int64     `json:"size"`
+	ModifiedAt time.Time `json:"modifiedAt"`
+}
 
 // Storage abstracts where uploaded files live so the backend can later be
 // switched to Cloudflare R2, AWS S3 or another object store without touching
@@ -16,6 +25,7 @@ import (
 type Storage interface {
 	Save(file multipart.File, header *multipart.FileHeader) (url string, err error)
 	Delete(url string) error
+	List() ([]File, error)
 }
 
 // LocalStorage stores files on the local filesystem under a directory and
@@ -63,4 +73,36 @@ func (s *LocalStorage) Delete(url string) error {
 		return nil
 	}
 	return err
+}
+
+// List returns every stored file, newest first. Hidden files (".gitkeep" and
+// friends) and subdirectories are skipped.
+func (s *LocalStorage) List() ([]File, error) {
+	entries, err := os.ReadDir(s.dir)
+	if err != nil {
+		return nil, fmt.Errorf("read upload dir: %w", err)
+	}
+
+	files := make([]File, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() || strings.HasPrefix(entry.Name(), ".") {
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+		files = append(files, File{
+			Name:       entry.Name(),
+			URL:        "/uploads/" + entry.Name(),
+			Size:       info.Size(),
+			ModifiedAt: info.ModTime(),
+		})
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].ModifiedAt.After(files[j].ModifiedAt)
+	})
+
+	return files, nil
 }

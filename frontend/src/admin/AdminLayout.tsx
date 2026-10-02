@@ -1,4 +1,4 @@
-import { ExternalLink, FileText, Image as ImageIcon, LayoutDashboard, LogOut, Youtube } from 'lucide-react'
+import { ExternalLink, FileText, Image as ImageIcon, Images, LayoutDashboard, LogOut, Youtube } from 'lucide-react'
 import { Link, Navigate, NavLink, Outlet } from 'react-router-dom'
 import { logout } from '../api/auth'
 import Spinner from '../components/Spinner'
@@ -8,6 +8,7 @@ const nav = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/posts', label: 'Blog Posts', icon: FileText },
   { to: '/admin/photos', label: 'Photos', icon: ImageIcon },
+  { to: '/admin/images', label: 'Images', icon: Images },
   { to: '/admin/vlogs', label: 'Vlogs', icon: Youtube },
 ]
 
