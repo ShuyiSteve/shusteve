@@ -122,12 +122,12 @@ export default function AdminPhotos() {
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               onChange={(e) => onPick(e.target.files?.[0] ?? null)}
-              className="block w-full text-sm text-neutral-500 file:mr-4 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200 dark:text-neutral-400 dark:file:bg-neutral-800 dark:file:text-neutral-200"
+              className="block w-full text-sm text-neutral-500 file:mr-4 file:rounded-full file:border-0 file:bg-neutral-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200 dark:text-neutral-400 dark:file:bg-neutral-800 dark:file:text-neutral-200"
             />
           </div>
           {previewUrl && (
             <div className="sm:col-span-2">
-              <img src={previewUrl} alt="Preview" className="max-h-56 rounded-lg border hairline object-contain" />
+              <img src={previewUrl} alt="Preview" className="max-h-56 rounded-inner border hairline object-contain" />
             </div>
           )}
           <div>
@@ -166,7 +166,7 @@ export default function AdminPhotos() {
           {!loading && !error && data && data.length > 0 && (
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {data.map((photo) => (
-                <li key={photo.id} className="overflow-hidden rounded-2xl border hairline bg-white dark:bg-neutral-900">
+                <li key={photo.id} className="overflow-hidden rounded-card border hairline bg-white dark:bg-neutral-900">
                   <img src={photo.imageUrl} alt={photo.title || 'Photo'} loading="lazy" className="aspect-[4/3] w-full object-cover" />
                   <div className="p-4">
                     <p className="truncate font-medium text-neutral-900 dark:text-neutral-50">{photo.title || 'Untitled'}</p>
@@ -195,7 +195,7 @@ export default function AdminPhotos() {
           <form
             onSubmit={onSaveEdit}
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border hairline bg-white p-6 dark:bg-neutral-900"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-card border hairline bg-white p-6 dark:bg-neutral-900"
           >
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Edit photo</h2>
@@ -206,7 +206,7 @@ export default function AdminPhotos() {
 
             <div className="mt-5 space-y-4">
               <div>
-                <img src={editPreview || editing.imageUrl} alt="Current" className="max-h-48 rounded-lg border hairline object-contain" />
+                <img src={editPreview || editing.imageUrl} alt="Current" className="max-h-48 rounded-inner border hairline object-contain" />
               </div>
               <div>
                 <label htmlFor="editfile" className={labelCls}>Replace image (optional)</label>

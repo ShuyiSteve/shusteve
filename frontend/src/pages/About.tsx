@@ -1,7 +1,7 @@
-import { Github, Mail, Youtube } from 'lucide-react'
+import { Github, Mail } from 'lucide-react'
 import Container from '../components/Container'
 import Reveal from '../components/Reveal'
-import { EMAIL, GITHUB_URL, YOUTUBE_URL } from '../config/links'
+import { EMAIL, GITHUB_URL } from '../config/links'
 import { INTERESTS, PROFILE, STACK } from '../config/profile'
 import { usePageMeta } from '../hooks/usePageMeta'
 
@@ -94,9 +94,6 @@ export default function About() {
               </a>
               <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="btn-secondary px-4">
                 <Github size={15} /> GitHub
-              </a>
-              <a href={YOUTUBE_URL} target="_blank" rel="noreferrer" className="btn-secondary px-4">
-                <Youtube size={15} /> YouTube
               </a>
             </div>
           </Reveal>

@@ -37,7 +37,7 @@ export default function Photos() {
                 key={photo.id}
                 type="button"
                 onClick={() => setIndex(i)}
-                className="group block w-full overflow-hidden rounded-xl border hairline bg-white text-left dark:bg-surface-dark"
+                className="group block w-full overflow-hidden rounded-card border hairline bg-white text-left dark:bg-surface-dark"
               >
                 <div className="overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                   <img

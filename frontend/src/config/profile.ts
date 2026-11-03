@@ -27,4 +27,4 @@ export const STACK = [
   { group: 'Tools & Theory', items: ['Docker', 'Git', 'Discrete Math'] },
 ]
 
-export const INTERESTS = ['Programming', 'Computer Science', 'Photography', 'Video / Vlog', 'Technology', 'Reading']
+export const INTERESTS = ['Programming', 'Computer Science', 'Photography', 'Video', 'Technology', 'Reading']

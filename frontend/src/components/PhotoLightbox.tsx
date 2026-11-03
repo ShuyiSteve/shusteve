@@ -88,7 +88,7 @@ export default function PhotoLightbox({
             <img
               src={photo.imageUrl}
               alt={photo.title || photo.description || 'Photo'}
-              className="max-h-[76vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+              className="max-h-[76vh] w-auto max-w-full rounded-card object-contain shadow-2xl"
             />
             {(photo.title || photo.location || photo.takenAt) && (
               <figcaption className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-sm text-neutral-300">

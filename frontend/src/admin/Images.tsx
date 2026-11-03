@@ -152,7 +152,7 @@ export default function AdminImages() {
           {visible.map((f) => (
             <li
               key={f.url}
-              className={`overflow-hidden rounded-2xl border bg-white dark:bg-neutral-900 ${
+              className={`overflow-hidden rounded-card border bg-white dark:bg-neutral-900 ${
                 f.used ? 'hairline' : 'border-amber-300 dark:border-amber-900/70'
               }`}
             >

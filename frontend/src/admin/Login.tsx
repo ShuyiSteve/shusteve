@@ -34,7 +34,7 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-paper-light px-4 dark:bg-paper-dark">
       <div className="w-full max-w-sm">
-        <div className="rounded-2xl border hairline bg-white p-8 shadow-xl shadow-neutral-900/5 dark:bg-neutral-900 dark:shadow-black/30">
+        <div className="rounded-card border hairline bg-white p-8 shadow-xl shadow-neutral-900/5 dark:bg-neutral-900 dark:shadow-black/30">
           <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
             shuSteve Admin
           </h1>
@@ -75,7 +75,7 @@ export default function Login() {
             </div>
 
             {error && (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-400">
+              <p className="rounded-inner border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-400">
                 {error}
               </p>
             )}

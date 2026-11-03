@@ -1,7 +1,7 @@
-import { Github, Mail, Youtube } from 'lucide-react'
+import { Github, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { OWNER_NAME } from '../config'
-import { EMAIL, GITHUB_URL, YOUTUBE_URL } from '../config/links'
+import { EMAIL, GITHUB_URL } from '../config/links'
 
 export default function Footer() {
   return (
@@ -25,15 +25,6 @@ export default function Footer() {
             className="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
           >
             <Github size={17} strokeWidth={1.75} />
-          </a>
-          <a
-            href={YOUTUBE_URL}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="YouTube"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-          >
-            <Youtube size={18} strokeWidth={1.75} />
           </a>
           <a
             href={`mailto:${EMAIL}`}

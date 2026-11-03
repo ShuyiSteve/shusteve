@@ -1,20 +1,20 @@
-import { Image as ImageIcon, Youtube } from 'lucide-react'
+import { FileText, Image as ImageIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useFetch } from '../hooks/useFetch'
 import type { Stats } from '../types'
 import { card } from './ui'
 
 const quick = [
+  { to: '/admin/posts/new', label: 'New Blog Post', icon: FileText, hint: 'Write or upload a .md file' },
   { to: '/admin/photos', label: 'Upload Photos', icon: ImageIcon, hint: 'Add to the gallery' },
-  { to: '/admin/vlogs', label: 'Add Vlog', icon: Youtube, hint: 'Link a YouTube video' },
 ]
 
 export default function Dashboard() {
   const { data, loading } = useFetch<Stats>('/api/admin/stats')
 
   const stats = [
+    { label: 'Blog Posts', value: data?.posts ?? 0, to: '/admin/posts', icon: FileText },
     { label: 'Photos', value: data?.photos ?? 0, to: '/admin/photos', icon: ImageIcon },
-    { label: 'Vlogs', value: data?.vlogs ?? 0, to: '/admin/vlogs', icon: Youtube },
   ]
 
   return (
@@ -46,7 +46,7 @@ export default function Dashboard() {
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {quick.map((q) => (
           <Link key={q.to} to={q.to} className={`${card} card-hover flex items-start gap-4`}>
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-inner bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
               <q.icon size={18} strokeWidth={1.75} />
             </span>
             <span>

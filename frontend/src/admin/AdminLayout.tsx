@@ -1,4 +1,4 @@
-import { ExternalLink, Image as ImageIcon, Images, LayoutDashboard, LogOut, Youtube } from 'lucide-react'
+import { ExternalLink, FileText, Image as ImageIcon, Images, LayoutDashboard, LogOut } from 'lucide-react'
 import { Link, Navigate, NavLink, Outlet } from 'react-router-dom'
 import { logout } from '../api/auth'
 import Spinner from '../components/Spinner'
@@ -6,9 +6,9 @@ import { useAuth } from '../hooks/useAuth'
 
 const nav = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/admin/posts', label: 'Blog Posts', icon: FileText },
   { to: '/admin/photos', label: 'Photos', icon: ImageIcon },
   { to: '/admin/images', label: 'Images', icon: Images },
-  { to: '/admin/vlogs', label: 'Vlogs', icon: Youtube },
 ]
 
 export default function AdminLayout() {
@@ -52,7 +52,7 @@ export default function AdminLayout() {
                 to={n.to}
                 end={n.end}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 rounded-inner px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
                       : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-50'
@@ -67,7 +67,7 @@ export default function AdminLayout() {
           <div className="space-y-1 border-t hairline p-3">
             <Link
               to="/"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
+              className="flex items-center gap-3 rounded-inner px-3 py-2.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
             >
               <ExternalLink size={17} strokeWidth={1.75} />
               View site
@@ -75,7 +75,7 @@ export default function AdminLayout() {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
+              className="flex w-full items-center gap-3 rounded-inner px-3 py-2.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
             >
               <LogOut size={17} strokeWidth={1.75} />
               Log out

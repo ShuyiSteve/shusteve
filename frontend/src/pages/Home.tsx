@@ -3,18 +3,17 @@ import {
   ArrowUpRight,
   Camera,
   Check,
-  Clapperboard,
   Copy,
   Github,
   GraduationCap,
   Mail,
   MapPin,
-  Youtube,
+  PenLine,
   type LucideIcon,
 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { EMAIL, GITHUB_URL, YOUTUBE_URL } from '../config/links'
+import { EMAIL, GITHUB_URL } from '../config/links'
 import { INTERESTS, PROFILE, STACK } from '../config/profile'
 import { usePageMeta } from '../hooks/usePageMeta'
 
@@ -27,8 +26,8 @@ const item: Variants = {
 }
 
 const explore = [
+  { to: '/blog', label: 'Blog', hint: 'Notes & writing', icon: PenLine },
   { to: '/photos', label: 'Photos', hint: 'Travel & daily life', icon: Camera },
-  { to: '/vlog', label: 'Vlog', hint: 'Videos on YouTube', icon: Clapperboard },
 ]
 
 function CopyButton({ text }: { text: string }) {
@@ -94,7 +93,7 @@ export default function Home() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <section className="container-page py-6 sm:py-8">
+      <section className="container-page pb-6 pt-4 sm:py-8">
         {/* lg: row-dense lets the Explore card slot in beside the facts even though it comes last in the DOM */}
         <motion.div
           variants={grid}
@@ -102,28 +101,30 @@ export default function Home() {
           animate="show"
           className="grid gap-4 md:grid-cols-2 lg:grid-flow-row-dense lg:grid-cols-12 lg:gap-5"
         >
-          {/* Portrait — desktop only, always shown whole (never cropped); on small screens it sits inside the intro card */}
+          {/* Portrait — desktop only; on small screens it sits inside the intro card. Deliberately not a .card:
+              no border or background, so the photo reaches the edge. Its column widths keep the intro shorter
+              than the photo, so the row takes the photo's height and the whole picture shows. */}
           <motion.figure
             variants={item}
-            className="card hidden items-center justify-center overflow-hidden bg-neutral-100 dark:bg-black/30 lg:col-span-4 lg:flex"
+            className="relative hidden overflow-hidden rounded-card lg:col-span-5 lg:block xl:col-span-4"
           >
-            {/* Wrapper keeps the location tag pinned to the photo's own corner, even when the card letterboxes it */}
-            <div className="relative w-full">
-              <img
-                src={PROFILE.portrait}
-                alt={`${PROFILE.name} in front of Big Ben, London`}
-                width={1240}
-                height={1280}
-                className="block h-auto w-full"
-              />
-              <figcaption className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
-                <MapPin size={13} /> {PROFILE.location}
-              </figcaption>
-            </div>
+            <img
+              src={PROFILE.portrait}
+              alt={`${PROFILE.name} in front of Big Ben, London`}
+              width={1240}
+              height={1280}
+              className="block h-full w-full object-cover"
+            />
+            <figcaption className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
+              <MapPin size={13} /> {PROFILE.location}
+            </figcaption>
           </motion.figure>
 
           {/* Intro */}
-          <motion.div variants={item} className="card relative overflow-hidden p-5 sm:p-8 md:col-span-2 lg:col-span-8">
+          <motion.div
+            variants={item}
+            className="card relative overflow-hidden p-5 sm:p-8 md:col-span-2 lg:col-span-7 xl:col-span-8 xl:py-7"
+          >
             <div
               aria-hidden
               className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-coral/25 blur-3xl dark:bg-azure/25"
@@ -135,12 +136,12 @@ export default function Home() {
                   alt=""
                   width={54}
                   height={56}
-                  className="h-14 w-auto rounded-xl lg:hidden"
+                  className="h-14 w-auto rounded-inner lg:hidden"
                 />
                 <p className="text-[15px] font-medium text-neutral-600 dark:text-neutral-300">{PROFILE.realName}</p>
               </div>
 
-              <h1 className="mt-3 font-serif sm:mt-4 text-[2.75rem] font-medium leading-[1.05] tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-6xl">
+              <h1 className="mt-3 font-serif text-[2.75rem] font-medium leading-[1.05] tracking-tight text-neutral-900 dark:text-neutral-50 sm:mt-4 sm:text-6xl">
                 {PROFILE.name}
               </h1>
               <p className="mt-3 text-lg font-medium text-neutral-700 dark:text-neutral-200">
@@ -150,28 +151,12 @@ export default function Home() {
                 {PROFILE.bio}
               </p>
 
-              {/* On phones GitHub/YouTube collapse to icons so all three fit on one row */}
               <div className="mt-4 flex flex-wrap gap-2 sm:mt-6">
                 <a href={`mailto:${EMAIL}`} className="btn-primary">
                   <Mail size={15} /> Email me
                 </a>
-                <a
-                  href={GITHUB_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="GitHub"
-                  className="btn-secondary px-3.5 sm:px-5"
-                >
-                  <Github size={15} /> <span className="hidden sm:inline">GitHub</span>
-                </a>
-                <a
-                  href={YOUTUBE_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="YouTube"
-                  className="btn-secondary px-3.5 sm:px-5"
-                >
-                  <Youtube size={15} /> <span className="hidden sm:inline">YouTube</span>
+                <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="btn-secondary">
+                  <Github size={15} /> GitHub
                 </a>
               </div>
             </div>
@@ -230,7 +215,7 @@ export default function Home() {
                 <li key={e.to}>
                   <Link
                     to={e.to}
-                    className="group flex items-center gap-3 rounded-2xl p-2.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5"
+                    className="group flex items-center gap-3 rounded-inner p-2.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5"
                   >
                     <span className="accent-tile h-9 w-9">
                       <e.icon size={17} strokeWidth={1.9} />

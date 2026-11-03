@@ -1,0 +1,428 @@
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, Eye, FileUp, ImagePlus, PenLine, Upload, X } from 'lucide-react'
+import { adminCreatePost, adminGetPosts, adminUpdatePost, adminUploadImage } from '../api/admin'
+import Markdown from '../components/Markdown'
+import Spinner from '../components/Spinner'
+import type { Post } from '../types'
+import { btnGhost, btnPrimary, card, inputCls, labelCls } from './ui'
+
+const empty = {
+  title: '',
+  slug: '',
+  description: '',
+  category: '',
+  coverImageUrl: '',
+  content: '',
+  published: false,
+}
+
+// Keep in sync with allowedImageTypes in backend/controllers/photos.go
+const ACCEPTED_IMAGES = 'image/jpeg,image/png,image/webp,image/gif'
+// Keep in sync with MAX_UPLOAD_MB in the backend/docker configuration.
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+
+// ![alt](src) or ![alt](<src with spaces>) — group 1 or 2 is the src.
+const MD_IMAGE = /!\[[^\]]*\]\(\s*(?:<([^>]+)>|([^)\s]+))[^)]*\)/g
+
+// True for an image that points at a file on someone's computer, not the web or /uploads.
+const isLocalImage = (src: string) => !/^(https?:|data:|\/)/i.test(src)
+
+function fileNameOf(src: string) {
+  const name = src.split(/[\\/]/).pop() ?? src
+  try {
+    return decodeURIComponent(name)
+  } catch {
+    return name
+  }
+}
+
+// Reads an uploaded .md file. Front matter (title / description / category) is
+// used when present; otherwise a leading "# heading" becomes the title.
+function parseMarkdownFile(raw: string) {
+  let content = raw.replace(/\r\n/g, '\n')
+  const meta: Record<string, string> = {}
+
+  const front = content.match(/^---\n([\s\S]*?)\n---(?:\n|$)/)
+  if (front) {
+    content = content.slice(front[0].length)
+    for (const line of front[1].split('\n')) {
+      const m = line.match(/^(title|description|category):\s*(.+)$/i)
+      if (m) meta[m[1].toLowerCase()] = m[2].trim().replace(/^(['"])(.*)\1$/, '$2')
+    }
+  }
+
+  // The post page prints the title itself, so a heading used as the title leaves the body.
+  const heading = content.match(/^\s*#[ \t]+(.+?)[ \t]*(?:\n|$)/)
+  if (heading && (!meta.title || meta.title === heading[1])) {
+    meta.title = heading[1]
+    content = content.slice(heading[0].length)
+  }
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    category: meta.category,
+    content: content.replace(/^\s+/, ''),
+  }
+}
+
+export default function PostEditor() {
+  const { id } = useParams<{ id: string }>()
+  const isEdit = Boolean(id)
+  const navigate = useNavigate()
+
+  const [form, setForm] = useState(empty)
+  const [preview, setPreview] = useState(false)
+  const [loading, setLoading] = useState(isEdit)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [uploading, setUploading] = useState<'cover' | 'content' | null>(null)
+  const [uploadError, setUploadError] = useState('')
+
+  const coverInput = useRef<HTMLInputElement>(null)
+  const contentInput = useRef<HTMLInputElement>(null)
+  const markdownInput = useRef<HTMLInputElement>(null)
+  const contentArea = useRef<HTMLTextAreaElement>(null)
+
+  const localImages = useMemo(
+    () => [...form.content.matchAll(MD_IMAGE)].map((m) => m[1] ?? m[2]).filter(isLocalImage),
+    [form.content],
+  )
+
+  useEffect(() => {
+    if (!isEdit) return
+    adminGetPosts()
+      .then((posts) => {
+        const p = posts.find((x) => String(x.id) === id)
+        if (p) {
+          setForm({
+            title: p.title,
+            slug: p.slug,
+            description: p.description,
+            category: p.category,
+            coverImageUrl: p.coverImageUrl,
+            content: p.content,
+            published: p.published,
+          })
+        }
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load post'))
+      .finally(() => setLoading(false))
+  }, [id, isEdit])
+
+  const set = (key: keyof typeof empty, value: string | boolean) =>
+    setForm((f) => ({ ...f, [key]: value }))
+
+  // Insert a Markdown snippet at the textarea cursor (appends if unfocused).
+  const insertIntoContent = (snippet: string) => {
+    const el = contentArea.current
+    if (!el) {
+      setForm((f) => ({ ...f, content: `${f.content}${snippet}` }))
+      return
+    }
+    const start = el.selectionStart ?? form.content.length
+    const end = el.selectionEnd ?? start
+    setForm((f) => ({ ...f, content: f.content.slice(0, start) + snippet + f.content.slice(end) }))
+    requestAnimationFrame(() => {
+      el.focus()
+      const pos = start + snippet.length
+      el.setSelectionRange(pos, pos)
+    })
+  }
+
+  const uploadFile = async (file: File, target: 'cover' | 'content') => {
+    setUploadError('')
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadError('Image is too large (max 10 MB)')
+      if (coverInput.current) coverInput.current.value = ''
+      if (contentInput.current) contentInput.current.value = ''
+      return
+    }
+    setUploading(target)
+    try {
+      const { url } = await adminUploadImage(file)
+      if (target === 'cover') {
+        setForm((f) => ({ ...f, coverImageUrl: url }))
+      } else {
+        // A photo the document already points at swaps in place; anything else goes in at the cursor.
+        const src = localImages.find((s) => fileNameOf(s) === file.name)
+        if (src) {
+          setForm((f) => ({
+            ...f,
+            content: f.content.replace(MD_IMAGE, (m, a, b) => ((a ?? b) === src ? m.replace(src, () => url) : m)),
+          }))
+        } else {
+          const alt = file.name.replace(/\.[^.]+$/, '')
+          insertIntoContent(`\n![${alt}](${url})\n`)
+        }
+      }
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : 'Upload failed')
+    } finally {
+      setUploading(null)
+      if (coverInput.current) coverInput.current.value = ''
+      if (contentInput.current) contentInput.current.value = ''
+    }
+  }
+
+  const importMarkdown = async (file: File) => {
+    if (markdownInput.current) markdownInput.current.value = ''
+    setUploadError('')
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadError('File is too large (max 10 MB)')
+      return
+    }
+    if (form.content.trim() && !window.confirm(`Replace the current content with "${file.name}"?`)) return
+    try {
+      const doc = parseMarkdownFile(await file.text())
+      setForm((f) => ({
+        ...f,
+        title: doc.title || f.title || file.name.replace(/\.[^.]+$/, ''),
+        description: doc.description || f.description,
+        category: doc.category || f.category,
+        content: doc.content,
+      }))
+    } catch {
+      setUploadError('Could not read that file')
+    }
+  }
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSaving(true)
+    try {
+      if (isEdit) {
+        await adminUpdatePost(Number(id), form)
+      } else {
+        await adminCreatePost(form)
+      }
+      navigate('/admin/posts')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save')
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return <Spinner label="Loading post…" />
+  }
+
+  return (
+    <div>
+      <header className="flex items-center justify-between gap-4">
+        <div>
+          <Link to="/admin/posts" className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50">
+            <ArrowLeft size={15} /> All posts
+          </Link>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+            {isEdit ? 'Edit Post' : 'New Post'}
+          </h1>
+        </div>
+        <button
+          type="button"
+          onClick={() => setPreview((p) => !p)}
+          className={preview ? btnPrimary : btnGhost}
+        >
+          {preview ? <PenLine size={15} /> : <Eye size={15} />}
+          {preview ? 'Editor' : 'Preview'}
+        </button>
+      </header>
+
+      <form onSubmit={onSubmit} className="mt-8 space-y-6">
+        <div className={card}>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label htmlFor="title" className={labelCls}>Title *</label>
+              <input
+                id="title"
+                required
+                value={form.title}
+                onChange={(e) => set('title', e.target.value)}
+                placeholder="My First Blog"
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="slug" className={labelCls}>Slug <span className="text-neutral-400">(optional, auto-generated)</span></label>
+              <input
+                id="slug"
+                value={form.slug}
+                onChange={(e) => set('slug', e.target.value)}
+                placeholder="my-first-blog"
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className={labelCls}>Category</label>
+              <input
+                id="category"
+                value={form.category}
+                onChange={(e) => set('category', e.target.value)}
+                placeholder="Programming"
+                className={inputCls}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="description" className={labelCls}>Description</label>
+              <input
+                id="description"
+                value={form.description}
+                onChange={(e) => set('description', e.target.value)}
+                placeholder="A short summary shown on the blog index."
+                className={inputCls}
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="cover" className={labelCls}>Cover Image</label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="cover"
+                  value={form.coverImageUrl}
+                  onChange={(e) => set('coverImageUrl', e.target.value)}
+                  placeholder="https://… or /uploads/cover.jpg"
+                  className={inputCls}
+                />
+                <button
+                  type="button"
+                  onClick={() => coverInput.current?.click()}
+                  disabled={uploading !== null}
+                  className={`${btnGhost} shrink-0 justify-center`}
+                >
+                  <Upload size={15} />
+                  {uploading === 'cover' ? 'Uploading…' : 'Choose photo'}
+                </button>
+              </div>
+              <input
+                ref={coverInput}
+                type="file"
+                accept={ACCEPTED_IMAGES}
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (f) uploadFile(f, 'cover')
+                }}
+              />
+              {form.coverImageUrl && (
+                <div className="mt-3 flex flex-wrap items-start gap-3">
+                  <img
+                    src={form.coverImageUrl}
+                    alt="Cover preview"
+                    className="aspect-[16/9] w-full max-w-sm rounded-inner border hairline object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => set('coverImageUrl', '')}
+                    className={btnGhost}
+                  >
+                    <X size={14} /> Remove
+                  </button>
+                </div>
+              )}
+              <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">
+                JPG / PNG / WebP / GIF，最大 10MB。封面会被裁成 16:9，建议用 1920×1080。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {uploadError && <p className="text-sm text-red-600 dark:text-red-400">{uploadError}</p>}
+
+        {preview ? (
+          <div className={card}>
+            <div className="mb-4 border-b hairline pb-4">
+              <h2 className="font-serif text-2xl font-medium text-neutral-900 dark:text-neutral-50">{form.title || 'Untitled'}</h2>
+              <p className="mt-1 text-sm text-neutral-500">{form.description || 'No description'}</p>
+            </div>
+            <Markdown content={form.content || '*Nothing written yet.*'} />
+          </div>
+        ) : (
+          <div className={card}>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+              <label htmlFor="content" className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                Content (Markdown) *
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={() => markdownInput.current?.click()} className={btnGhost}>
+                  <FileUp size={15} /> Upload .md
+                </button>
+                <button
+                  type="button"
+                  onClick={() => contentInput.current?.click()}
+                  disabled={uploading !== null}
+                  className={btnGhost}
+                >
+                  <ImagePlus size={15} />
+                  {uploading === 'content' ? 'Uploading…' : 'Insert photo'}
+                </button>
+              </div>
+            </div>
+            <input
+              ref={markdownInput}
+              type="file"
+              accept=".md,.markdown,text/markdown"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0]
+                if (f) importMarkdown(f)
+              }}
+            />
+            <input
+              ref={contentInput}
+              type="file"
+              accept={ACCEPTED_IMAGES}
+              multiple
+              className="hidden"
+              onChange={async (e) => {
+                for (const f of Array.from(e.target.files ?? [])) await uploadFile(f, 'content')
+              }}
+            />
+            <textarea
+              ref={contentArea}
+              id="content"
+              required
+              rows={18}
+              value={form.content}
+              onChange={(e) => set('content', e.target.value)}
+              placeholder={'# My First Blog\n\nToday I started building my personal website.\n\n## Golang\n\nI\'m currently learning…'}
+              className={`${inputCls} font-mono text-sm leading-relaxed`}
+            />
+            {localImages.length > 0 && (
+              <p className="mt-2 rounded-inner border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300">
+                Still on your computer: {localImages.map(fileNameOf).join(', ')}. Click <strong>Insert photo</strong> and
+                select these files, and each one will drop into its place.
+              </p>
+            )}
+            <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">
+              照片会插入到光标所在位置，写成 Markdown 语法 ![](/uploads/xxx.jpg)。换行后写 *斜体* 可以做图注。
+            </p>
+          </div>
+        )}
+
+        <div className={`${card} flex flex-wrap items-center justify-between gap-4`}>
+          <label htmlFor="published" className="flex cursor-pointer items-center gap-3">
+            <input
+              id="published"
+              type="checkbox"
+              checked={form.published}
+              onChange={(e) => set('published', e.target.checked)}
+              className="h-4 w-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 dark:border-neutral-700"
+            />
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">Publish</span>
+          </label>
+
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+
+          <div className="flex gap-2">
+            <Link to="/admin/posts" className={btnGhost}>Cancel</Link>
+            <button type="submit" disabled={saving} className={btnPrimary}>
+              {saving ? 'Saving…' : isEdit ? 'Save changes' : form.published ? 'Publish post' : 'Save draft'}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}

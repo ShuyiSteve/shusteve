@@ -13,6 +13,11 @@ export default {
       maxWidth: {
         content: '1120px',
       },
+      // The only two corner sizes on the site, plus rounded-full for buttons and tags.
+      borderRadius: {
+        card: '1.5rem', // surfaces: cards, top bar, photos, dialogs
+        inner: '0.75rem', // small things inside a surface: icon tiles, inputs, menu rows
+      },
       colors: {
         paper: {
           light: '#FFF5F0',
