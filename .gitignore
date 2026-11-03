@@ -13,6 +13,9 @@ backend/shusteve-api
 frontend/.env
 backend/.env
 
+# TLS certificates and private keys (never commit these)
+certs/
+
 # Local uploads (except the placeholder)
 backend/uploads/*
 !backend/uploads/.gitkeep
