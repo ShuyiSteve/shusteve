@@ -1,23 +1,7 @@
 import { apiFetch } from './client'
-import type { Post, Photo, Vlog, Stats } from '../types'
+import type { Photo, Vlog, Stats } from '../types'
 
 export const adminGetStats = () => apiFetch<Stats>('/api/admin/stats')
-
-// Upload a blog image (cover or inline). Unlike the photos endpoints this does
-// not create a gallery record — it just stores the file and returns its URL.
-export const adminUploadImage = (file: File) => {
-  const fd = new FormData()
-  fd.append('file', file)
-  return apiFetch<{ url: string }>('/api/admin/uploads', { method: 'POST', body: fd })
-}
-
-export const adminGetPosts = () => apiFetch<Post[]>('/api/admin/posts')
-export const adminCreatePost = (post: Partial<Post>) =>
-  apiFetch<Post>('/api/admin/posts', { method: 'POST', body: JSON.stringify(post) })
-export const adminUpdatePost = (id: number, post: Partial<Post>) =>
-  apiFetch<Post>(`/api/admin/posts/${id}`, { method: 'PUT', body: JSON.stringify(post) })
-export const adminDeletePost = (id: number) =>
-  apiFetch<void>(`/api/admin/posts/${id}`, { method: 'DELETE' })
 
 export const adminGetPhotos = () => apiFetch<Photo[]>('/api/admin/photos')
 export const adminCreatePhoto = (form: FormData) =>

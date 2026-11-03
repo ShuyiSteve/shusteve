@@ -1,17 +1,19 @@
 import { Github, Mail, Youtube } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { OWNER_NAME } from '../config'
 import { EMAIL, GITHUB_URL, YOUTUBE_URL } from '../config/links'
 
 export default function Footer() {
   return (
     <footer className="border-t hairline py-10">
       <div className="container-page flex flex-col items-center justify-between gap-6 sm:flex-row">
-        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+        <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
           <Link to="/" className="font-semibold text-neutral-800 dark:text-neutral-100">
             shuSteve
           </Link>
-          <span className="mx-2">·</span>
-          <span>© {new Date().getFullYear()} Steve Wang</span>
+          <span>
+            © {new Date().getFullYear()} {OWNER_NAME}
+          </span>
         </div>
 
         <div className="flex items-center gap-1">

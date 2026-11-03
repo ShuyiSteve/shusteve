@@ -40,7 +40,35 @@
   }
 
   .hairline {
-    @apply border-neutral-200 dark:border-neutral-800;
+    @apply border-neutral-200/80 dark:border-white/10;
+  }
+
+  .card {
+    @apply rounded-3xl border hairline bg-white shadow-sm shadow-neutral-900/[0.03] dark:bg-surface-dark dark:shadow-none;
+  }
+
+  .eyebrow {
+    @apply text-sm font-medium text-neutral-500 dark:text-neutral-400;
+  }
+
+  .accent-text {
+    @apply text-coral-ink dark:text-azure-ink;
+  }
+
+  .accent-tile {
+    @apply inline-flex shrink-0 items-center justify-center rounded-xl bg-coral-soft text-coral-ink dark:bg-azure-soft dark:text-azure-ink;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border hairline bg-paper-light/60 px-3 py-1 text-sm text-neutral-700 dark:bg-white/[0.03] dark:text-neutral-200;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border hairline px-5 py-2.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-white/10;
   }
 
   .card-hover {

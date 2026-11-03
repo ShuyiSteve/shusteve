@@ -12,13 +12,13 @@ function youtubeThumb(url: string): string {
 }
 
 export default function Vlog() {
-  usePageMeta('Vlog', 'Video vlogs by Steve Wang on YouTube.')
+  usePageMeta('Vlog', 'Video vlogs by Steven Wang on YouTube.')
   const { data, loading, error } = useFetch<Vlog[]>('/api/vlogs')
 
   return (
     <Container className="py-14 sm:py-20">
       <header className="max-w-2xl">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">Video</p>
+        <p className="eyebrow">Video</p>
         <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-5xl">
           Vlog
         </h1>
@@ -44,7 +44,7 @@ export default function Vlog() {
                   href={vlog.youtubeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="card-hover group flex flex-col overflow-hidden rounded-2xl border hairline bg-white dark:bg-neutral-900"
+                  className="card-hover group flex flex-col overflow-hidden rounded-2xl border hairline bg-white dark:bg-surface-dark"
                 >
                   <div className="relative aspect-video overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                     {thumb ? (

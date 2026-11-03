@@ -8,14 +8,14 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import type { Photo } from '../types'
 
 export default function Photos() {
-  usePageMeta('Photos', 'Photography by Steve Wang — travel, London, university and daily life.')
+  usePageMeta('Photos', 'Photography by Steven Wang — travel, London, university and daily life.')
   const { data, loading, error } = useFetch<Photo[]>('/api/photos')
   const [index, setIndex] = useState<number | null>(null)
 
   return (
     <Container className="py-14 sm:py-20">
       <header className="max-w-2xl">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">Gallery</p>
+        <p className="eyebrow">Gallery</p>
         <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-5xl">
           Photos
         </h1>
@@ -37,7 +37,7 @@ export default function Photos() {
                 key={photo.id}
                 type="button"
                 onClick={() => setIndex(i)}
-                className="group block w-full overflow-hidden rounded-xl border hairline bg-white text-left dark:bg-neutral-900"
+                className="group block w-full overflow-hidden rounded-xl border hairline bg-white text-left dark:bg-surface-dark"
               >
                 <div className="overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                   <img

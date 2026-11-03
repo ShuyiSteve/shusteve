@@ -5,7 +5,6 @@ import ThemeToggle from './ThemeToggle'
 import { GITHUB_URL, YOUTUBE_URL } from '../config/links'
 
 const links = [
-  { to: '/blog', label: 'Blog' },
   { to: '/photos', label: 'Photos' },
   { to: '/vlog', label: 'Vlog' },
   { to: '/about', label: 'About' },
@@ -15,7 +14,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/20 bg-[#FF8F70] dark:bg-[#2E6BFF]">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/20 bg-coral dark:bg-azure">
       <nav className="container-page flex h-16 items-center justify-between" aria-label="Main navigation">
         <Link
           to="/"
@@ -76,7 +75,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-white/20 bg-[#FF8F70] px-5 py-4 dark:bg-[#2E6BFF] md:hidden">
+        <div className="border-t border-white/20 bg-coral px-5 py-4 dark:bg-azure md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((l) => (
               <NavLink

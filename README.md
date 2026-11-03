@@ -1,6 +1,6 @@
 # shuSteve
 
-Personal website for **Steve Wang** — a portfolio, blog, photography gallery and vlog hub, designed to be minimal, fast and easy to maintain without ever touching MySQL by hand.
+Personal website for **Steven Wang** (Shuyi Wang) — a portfolio, photography gallery and vlog hub, designed to be minimal, fast and easy to maintain without ever touching MySQL by hand.
 
 > **Design language:** ~50% Apple/Vercel minimalism, ~30% editorial magazine, ~20% Linear. Lots of whitespace, careful typography, large photography, hairline borders and subtle motion.
 
@@ -8,11 +8,11 @@ Personal website for **Steve Wang** — a portfolio, blog, photography gallery a
 
 ## ✨ Features
 
-- **Public site** — Home, Blog, Photos (masonry + lightbox), Vlog, About
-- **Markdown blog** with categories, cover images, reading time and drafts
+- **Public site** — Home (profile at a glance), Photos (masonry + lightbox), Vlog, About
+- **Profile in one file** — edit `frontend/src/config/profile.ts` to update name, school, location, bio, tech stack and interests everywhere
 - **Photo gallery** with upload, metadata (title / location / date) and fullscreen lightbox
 - **Vlog hub** — stores only YouTube metadata, videos stay on YouTube
-- **Admin dashboard** at `/admin` with secure login and full CRUD for posts, photos and vlogs
+- **Admin dashboard** at `/admin` with secure login and full CRUD for photos and vlogs
 - **Light / dark mode**, fully responsive (mobile → desktop)
 - **SEO + Open Graph**, lazy-loaded images, semantic/accessible markup
 - **Docker** for local and production, with Nginx + HTTPS-ready config
@@ -61,12 +61,12 @@ shuSteve/
 ├── frontend/               React + TypeScript + Vite + Tailwind
 │   ├── public/             static files (images, favicon, og-image)
 │   └── src/
-│       ├── components/     Navbar, Footer, Layout, Markdown, Lightbox…
-│       ├── pages/          Home, Blog, BlogPost, Photos, Vlog, About, 404
+│       ├── components/     Navbar, Footer, Layout, Lightbox…
+│       ├── pages/          Home, Photos, Vlog, About, 404
 │       ├── admin/          Admin dashboard (login + CRUD)
 │       ├── api/            typed API client
 │       ├── hooks/          theme, auth, data fetching
-│       ├── config/         env-driven configuration
+│       ├── config/         env-driven configuration + profile.ts (your personal info)
 │       └── types/          shared TypeScript types
 ├── backend/                Go + Gin + GORM
 │   ├── cmd/api/main.go     entrypoint
@@ -223,13 +223,6 @@ safely remove `ADMIN_PASSWORD` afterwards if you like.
 Open `http://localhost:5173/admin` (manual dev) or `http://localhost:3000/admin`
 (Docker).
 
-### Publish a blog post
-
-1. **Dashboard → Blog Posts → New Post**
-2. Fill in Title (Slug auto-generates), Description, Category, Cover Image URL.
-3. Write the body in **Markdown** (toggle **Preview** to check it).
-4. Tick **Publish** and click **Publish post**.
-
 ### Upload a photo
 
 1. **Photos → Upload photo**
@@ -267,7 +260,7 @@ Edit `frontend/.env`:
 ```env
 VITE_GITHUB_URL=https://github.com/your-username
 VITE_YOUTUBE_URL=https://www.youtube.com/@your-channel
-VITE_EMAIL=hello@shusteve.com
+VITE_EMAIL=shuyi1120@outlook.com
 ```
 
 These are read at **build time**, so restart `npm run dev` or rebuild after

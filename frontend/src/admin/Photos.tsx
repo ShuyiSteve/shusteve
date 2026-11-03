@@ -172,7 +172,7 @@ export default function AdminPhotos() {
                     <p className="truncate font-medium text-neutral-900 dark:text-neutral-50">{photo.title || 'Untitled'}</p>
                     <p className="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">
                       {photo.location || 'No location'}
-                      {photo.takenAt ? ` · ${new Date(photo.takenAt).getFullYear()}` : ''}
+                      {photo.takenAt ? `, ${new Date(photo.takenAt).getFullYear()}` : ''}
                     </p>
                     <div className="mt-3 flex gap-2">
                       <button type="button" onClick={() => { setEditing(photo); setEditFile(null); setEditPreview('') }} className={btnGhost}>

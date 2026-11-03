@@ -1,136 +1,257 @@
-import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { MotionConfig, motion, type Variants } from 'framer-motion'
+import {
+  ArrowUpRight,
+  Camera,
+  Check,
+  Clapperboard,
+  Copy,
+  Github,
+  GraduationCap,
+  Mail,
+  MapPin,
+  Youtube,
+  type LucideIcon,
+} from 'lucide-react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import Container from '../components/Container'
-import Reveal from '../components/Reveal'
+import { EMAIL, GITHUB_URL, YOUTUBE_URL } from '../config/links'
+import { INTERESTS, PROFILE, STACK } from '../config/profile'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const stack = [
-  { group: 'Backend', items: ['Golang', 'Gin', 'GORM'] },
-  { group: 'Database', items: ['MySQL'] },
-  { group: 'Frontend', items: ['React', 'TypeScript'] },
-  { group: 'Other', items: ['Python'] },
+// Everything on this page is above the fold, so cards animate in on load
+// (staggered) rather than on scroll.
+const grid: Variants = { show: { transition: { staggerChildren: 0.06 } } }
+const item: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] } },
+}
+
+const explore = [
+  { to: '/photos', label: 'Photos', hint: 'Travel & daily life', icon: Camera },
+  { to: '/vlog', label: 'Vlog', hint: 'Videos on YouTube', icon: Clapperboard },
 ]
 
-export default function Home() {
-  usePageMeta(undefined, 'Personal website of Steve Wang — CS student, developer and creator.')
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1600)
+    } catch {
+      // Clipboard can be unavailable (e.g. insecure context) — the mailto link still works.
+    }
+  }
 
   return (
-    <>
-      <section className="container-page py-16 sm:py-24 lg:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.85fr]">
-          <div>
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500"
-            >
-              shuSteve · Personal Site
-            </motion.p>
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={copied ? 'Email copied' : 'Copy email address'}
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-500 dark:hover:bg-white/10 dark:hover:text-neutral-200"
+    >
+      {copied ? <Check size={15} /> : <Copy size={15} />}
+    </button>
+  )
+}
 
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.05 }}
-              className="mt-5 font-serif text-5xl font-medium leading-[1.05] tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-6xl lg:text-7xl"
-            >
-              Steve Wang
-            </motion.h1>
+function Fact({
+  icon: Icon,
+  label,
+  children,
+  detail,
+  action,
+}: {
+  icon: LucideIcon
+  label: string
+  children: ReactNode
+  detail: string
+  action?: ReactNode
+}) {
+  return (
+    // Phones: icon on the left with the text stacked beside it (compact).
+    // sm+: icon and label share the top row, value and detail sit underneath.
+    <div className="card relative grid h-full grid-cols-[auto_1fr] content-start gap-x-3.5 px-4 py-3.5 sm:gap-x-2.5 sm:p-5">
+      <span className="accent-tile row-span-3 h-9 w-9 sm:row-span-1 sm:h-8 sm:w-8">
+        <Icon size={16} strokeWidth={1.9} />
+      </span>
+      <p className="eyebrow self-center pr-8">{label}</p>
+      <div className="pr-6 text-[15px] font-semibold leading-snug [overflow-wrap:anywhere] text-neutral-900 dark:text-neutral-50 sm:col-span-2 sm:mt-3 sm:pr-0">
+        {children}
+      </div>
+      <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400 sm:col-span-2">{detail}</p>
+      {action && <div className="absolute right-3 top-3 sm:right-4 sm:top-4">{action}</div>}
+    </div>
+  )
+}
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.1 }}
-              className="mt-4 text-lg font-medium text-neutral-600 dark:text-neutral-300"
-            >
-              UCL CS First Year Student
-            </motion.p>
+export default function Home() {
+  usePageMeta(
+    undefined,
+    `${PROFILE.name} (${PROFILE.realName}), ${PROFILE.school.course} student at ${PROFILE.school.short}, based in ${PROFILE.location}.`,
+  )
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.15 }}
-              className="mt-4 max-w-md text-base leading-relaxed text-neutral-500 dark:text-neutral-400"
-            >
-              Building things with code, exploring technology, and documenting the journey.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.2 }}
-              className="mt-8 flex flex-wrap items-center gap-3"
-            >
-              <Link
-                to="/blog"
-                className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
-              >
-                Read the blog
-                <ArrowRight size={15} />
-              </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 rounded-full border hairline px-5 py-2.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
-              >
-                About me
-              </Link>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="mx-auto w-full max-w-md"
+  return (
+    <MotionConfig reducedMotion="user">
+      <section className="container-page py-6 sm:py-8">
+        {/* lg: row-dense lets the Explore card slot in beside the facts even though it comes last in the DOM */}
+        <motion.div
+          variants={grid}
+          initial="hidden"
+          animate="show"
+          className="grid gap-4 md:grid-cols-2 lg:grid-flow-row-dense lg:grid-cols-12 lg:gap-5"
+        >
+          {/* Portrait — desktop only, always shown whole (never cropped); on small screens it sits inside the intro card */}
+          <motion.figure
+            variants={item}
+            className="card hidden items-center justify-center overflow-hidden bg-neutral-100 dark:bg-black/30 lg:col-span-4 lg:flex"
           >
-            <div className="overflow-hidden rounded-[1.75rem] border hairline bg-white shadow-xl shadow-neutral-900/10 dark:bg-neutral-900 dark:shadow-black/40">
+            {/* Wrapper keeps the location tag pinned to the photo's own corner, even when the card letterboxes it */}
+            <div className="relative w-full">
               <img
-                src="images/profile01.jpg"
-                alt="Portrait of Steve Wang"
-                width={1200}
-                height={1500}
-                className="h-auto w-full object-cover"
+                src={PROFILE.portrait}
+                alt={`${PROFILE.name} in front of Big Ben, London`}
+                width={1240}
+                height={1280}
+                className="block h-auto w-full"
               />
+              <figcaption className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
+                <MapPin size={13} /> {PROFILE.location}
+              </figcaption>
+            </div>
+          </motion.figure>
+
+          {/* Intro */}
+          <motion.div variants={item} className="card relative overflow-hidden p-5 sm:p-8 md:col-span-2 lg:col-span-8">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-coral/25 blur-3xl dark:bg-azure/25"
+            />
+            <div className="relative">
+              <div className="flex items-center gap-4">
+                <img
+                  src={PROFILE.portrait}
+                  alt=""
+                  width={54}
+                  height={56}
+                  className="h-14 w-auto rounded-xl lg:hidden"
+                />
+                <p className="text-[15px] font-medium text-neutral-600 dark:text-neutral-300">{PROFILE.realName}</p>
+              </div>
+
+              <h1 className="mt-3 font-serif sm:mt-4 text-[2.75rem] font-medium leading-[1.05] tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-6xl">
+                {PROFILE.name}
+              </h1>
+              <p className="mt-3 text-lg font-medium text-neutral-700 dark:text-neutral-200">
+                {PROFILE.school.course} student at <span className="accent-text">{PROFILE.school.short}</span>
+              </p>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-base">
+                {PROFILE.bio}
+              </p>
+
+              {/* On phones GitHub/YouTube collapse to icons so all three fit on one row */}
+              <div className="mt-4 flex flex-wrap gap-2 sm:mt-6">
+                <a href={`mailto:${EMAIL}`} className="btn-primary">
+                  <Mail size={15} /> Email me
+                </a>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  className="btn-secondary px-3.5 sm:px-5"
+                >
+                  <Github size={15} /> <span className="hidden sm:inline">GitHub</span>
+                </a>
+                <a
+                  href={YOUTUBE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="YouTube"
+                  className="btn-secondary px-3.5 sm:px-5"
+                >
+                  <Youtube size={15} /> <span className="hidden sm:inline">YouTube</span>
+                </a>
+              </div>
             </div>
           </motion.div>
-        </div>
-      </section>
 
-      <section className="border-t hairline py-20 sm:py-24">
-        <Container>
-          <Reveal>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
-              What I use
-            </p>
-            <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl">
-              Tech Stack
-            </h2>
-          </Reveal>
+          {/* Key facts */}
+          <motion.div variants={item} className="grid gap-4 sm:grid-cols-3 md:col-span-2 lg:col-span-9 lg:gap-5">
+            <Fact icon={GraduationCap} label="Education" detail={`${PROFILE.school.course}, ${PROFILE.school.year}`}>
+              {PROFILE.school.name}
+            </Fact>
+            <Fact icon={MapPin} label="Based in" detail={`Studying at ${PROFILE.school.short}`}>
+              {PROFILE.location}
+            </Fact>
+            <Fact icon={Mail} label="Email" detail="Best way to reach me" action={<CopyButton text={EMAIL} />}>
+              <a href={`mailto:${EMAIL}`} className="hover:underline">
+                {EMAIL}
+              </a>
+            </Fact>
+          </motion.div>
 
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stack.map((s, i) => (
-              <Reveal key={s.group} delay={i * 0.06}>
-                <div className="rounded-2xl border hairline bg-white p-6 dark:bg-neutral-900">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-                    {s.group}
-                  </h3>
-                  <ul className="mt-4 space-y-2">
-                    {s.items.map((item) => (
-                      <li
-                        key={item}
-                        className="inline-flex rounded-lg border hairline px-3 py-1 text-sm font-medium text-neutral-700 dark:text-neutral-200"
-                      >
-                        {item}
-                      </li>
+          {/* Tech stack */}
+          <motion.div variants={item} className="card p-6 md:col-span-2 lg:col-span-8">
+            <p className="eyebrow">Tech stack</p>
+            <dl className="mt-4 space-y-2.5">
+              {STACK.map((s) => (
+                <div key={s.group} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+                  <dt className="w-28 shrink-0 text-sm text-neutral-500 dark:text-neutral-400">{s.group}</dt>
+                  <dd className="flex flex-wrap gap-1.5">
+                    {s.items.map((t) => (
+                      <span key={t} className="chip px-2.5 py-0.5 font-medium">
+                        {t}
+                      </span>
                     ))}
-                  </ul>
+                  </dd>
                 </div>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
+              ))}
+            </dl>
+          </motion.div>
+
+          {/* Interests */}
+          <motion.div variants={item} className="card p-6 lg:col-span-4">
+            <p className="eyebrow">Interests</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {INTERESTS.map((i) => (
+                <span key={i} className="chip">
+                  {i}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Explore */}
+          <motion.nav variants={item} aria-label="Explore" className="card flex flex-col justify-center p-2.5 lg:col-span-3">
+            <ul>
+              {explore.map((e) => (
+                <li key={e.to}>
+                  <Link
+                    to={e.to}
+                    className="group flex items-center gap-3 rounded-2xl p-2.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5"
+                  >
+                    <span className="accent-tile h-9 w-9">
+                      <e.icon size={17} strokeWidth={1.9} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+                        {e.label}
+                      </span>
+                      <span className="block truncate text-xs text-neutral-500 dark:text-neutral-400">{e.hint}</span>
+                    </span>
+                    <ArrowUpRight
+                      size={16}
+                      className="text-neutral-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.nav>
+        </motion.div>
       </section>
-    </>
+    </MotionConfig>
   )
 }

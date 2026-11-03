@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { SITE_TITLE } from '../config'
+import { OWNER_NAME, SITE_TITLE } from '../config'
 
 export function usePageMeta(title?: string, description?: string) {
   useEffect(() => {
-    document.title = title ? `${title} | ${SITE_TITLE}` : `Steve Wang | ${SITE_TITLE}`
+    document.title = title ? `${title} | ${SITE_TITLE}` : `${OWNER_NAME} | ${SITE_TITLE}`
     if (description) {
       let meta = document.querySelector('meta[name="description"]')
       if (!meta) {

@@ -83,7 +83,7 @@ export default function AdminImages() {
       }
     }
     setBusyUrl(null)
-    if (failures.length > 0) setError(failures.join(' · '))
+    if (failures.length > 0) setError(failures.join('; '))
     await load()
   }
 
@@ -99,7 +99,7 @@ export default function AdminImages() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">Images</h1>
           <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            Every file uploaded for blog covers and inline pictures.
+            Every image file stored on the server.
           </p>
         </div>
         <button
@@ -142,7 +142,7 @@ export default function AdminImages() {
             title={files.length === 0 ? 'No images uploaded yet' : 'Nothing unused'}
             hint={
               files.length === 0
-                ? 'Add a photo from the post editor and it will show up here.'
+                ? 'Upload a photo to the gallery and it will show up here.'
                 : 'Every stored image is still referenced by a post or photo.'
             }
           />
@@ -177,7 +177,7 @@ export default function AdminImages() {
                   {f.name}
                 </p>
                 <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">
-                  {formatSize(f.size)} · {formatDate(f.modifiedAt)}
+                  {formatSize(f.size)}, {formatDate(f.modifiedAt)}
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button

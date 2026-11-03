@@ -18,6 +18,22 @@ export default {
           light: '#FFF5F0',
           dark: '#0A0E1E',
         },
+        // Card background in dark mode — a step lighter than paper-dark.
+        surface: {
+          dark: '#11172C',
+        },
+        // Brand accents: coral in light mode, blue in dark mode.
+        // `ink` variants are dark/light enough to be readable as text.
+        coral: {
+          DEFAULT: '#FF8F70',
+          ink: '#C4532F',
+          soft: '#FFE7DE',
+        },
+        azure: {
+          DEFAULT: '#2E6BFF',
+          ink: '#8FB0FF',
+          soft: '#18244D',
+        },
       },
     },
   },

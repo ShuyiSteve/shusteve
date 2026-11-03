@@ -1,13 +1,10 @@
-import { FileText, Image as ImageIcon, Plus, Youtube } from 'lucide-react'
+import { Image as ImageIcon, Youtube } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { adminGetStats } from '../api/admin'
-import Spinner from '../components/Spinner'
 import { useFetch } from '../hooks/useFetch'
 import type { Stats } from '../types'
 import { card } from './ui'
 
 const quick = [
-  { to: '/admin/posts/new', label: 'New Blog Post', icon: FileText, hint: 'Write and publish a post' },
   { to: '/admin/photos', label: 'Upload Photos', icon: ImageIcon, hint: 'Add to the gallery' },
   { to: '/admin/vlogs', label: 'Add Vlog', icon: Youtube, hint: 'Link a YouTube video' },
 ]
@@ -16,7 +13,6 @@ export default function Dashboard() {
   const { data, loading } = useFetch<Stats>('/api/admin/stats')
 
   const stats = [
-    { label: 'Blog Posts', value: data?.posts ?? 0, to: '/admin/posts', icon: FileText },
     { label: 'Photos', value: data?.photos ?? 0, to: '/admin/photos', icon: ImageIcon },
     { label: 'Vlogs', value: data?.vlogs ?? 0, to: '/admin/vlogs', icon: Youtube },
   ]
@@ -30,7 +26,7 @@ export default function Dashboard() {
         </p>
       </header>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {stats.map((s) => (
           <Link key={s.label} to={s.to} className={`${card} card-hover`}>
             <div className="flex items-center justify-between">
@@ -47,7 +43,7 @@ export default function Dashboard() {
       <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
         Quick actions
       </h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {quick.map((q) => (
           <Link key={q.to} to={q.to} className={`${card} card-hover flex items-start gap-4`}>
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
